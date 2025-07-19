@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="GGx PromptGenie - A modern, mobile-friendly AI prompt generator powered by GPT-4.">
+  <title>GGx PromptGenie</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: #38bdf8;
+    }
+
+    textarea, input {
+      width: 100%;
+      max-width: 500px;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      background-color: #22d3ee;
+      border: none;
+      border-radius: 8px;
+      color: #0f172a;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #06b6d4;
+    }
+
+    .response {
+      max-width: 500px;
+      margin-top: 20px;
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚡ GGx PromptGenie</h1>
+    <p>Generate smarter prompts using GPT-4</p>
+  </header>
+
+  <textarea id="userInput" placeholder="Type your idea or goal here..."></textarea>
+  <input type="text" id="apiUrl" placeholder="Enter your backend GPT-4 Proxy URL" value="https://your-proxy-url.com/api/chat"/>
+  <button onclick="generatePrompt()">✨ Generate Prompt</button>
+
+  <div id="output" class="response"></div>
+
+  <footer>
+    &copy; 2025 GGxAi | Powered by GPT-4 Proxy
+  </footer>
+
+  <script>
+    async function generatePrompt() {
+      const userInput = document.getElementById('userInput').value;
+      const apiUrl = document.getElementById('apiUrl').value;
+      const outputDiv = document.getElementById('output');
+
+      outputDiv.innerHTML = "⏳ Generating...";
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: "system", content: "You are a helpful prompt engineer." },
+              { role: "user", content: "Generate a high-quality prompt for this task: " + userInput }
+            ],
+            model: "gpt-4"
+          })
+        });
+
+        if (!response.ok) throw new Error("Network error");
+
+        const data = await response.json();
+        const reply = data.choices?.[0]?.message?.content || "⚠️ No response.";
+        outputDiv.innerHTML = reply;
+      } catch (error) {
+        outputDiv.innerHTML = "❌ Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
